@@ -15,7 +15,7 @@ This is a **Fly.io deployment wrapper** for [SongGeneration-Studio](https://gith
 - **ML Framework**: PyTorch with CUDA support, HuggingFace Transformers
 - **Audio Processing**: FFmpeg, torchaudio
 - **Cloud Platform**: Fly.io with GPU support (NVIDIA A10)
-- **Infrastructure**: 32GB RAM, 8 performance CPUs, auto-scaling enabled
+- **Infrastructure**: A10 VM size (includes GPU, RAM, and CPUs), auto-scaling enabled
 
 ## Common Commands
 
@@ -48,10 +48,10 @@ fly scale count 0
 docker build -t songgen-studio .
 
 # Run container locally (requires GPU)
-docker run --gpus all -p 7860:7860 songgen-studio
+docker run --gpus all -p 8000:8000 songgen-studio
 
 # Run without GPU (will fail for inference but useful for testing container)
-docker run -p 7860:7860 songgen-studio
+docker run -p 8000:8000 songgen-studio
 ```
 
 ### Testing Changes
@@ -80,14 +80,13 @@ This means:
 
 The `fly.toml` file defines GPU-enabled VM configuration:
 - `auto_stop_machines = true` and `min_machines_running = 0` enables serverless-style scaling
-- `gpu_kind = "a10"` requests NVIDIA A10 GPU (24GB VRAM)
-- `memory = '32gb'` is required for model loading and inference
+- `size = "a10"` requests NVIDIA A10 VM (includes GPU with 24GB VRAM, RAM, and CPUs)
 - Primary region `ord` (Chicago) - can be changed based on user location/latency needs
 
 ### Port Configuration
 
-- Gradio serves on port 7860 (standard)
-- Environment variables `GRADIO_SERVER_NAME` and `GRADIO_SERVER_PORT` must match `internal_port` in fly.toml
+- Application serves on port 8000
+- `internal_port = 8000` in fly.toml must match the port in Dockerfile CMD
 - Fly.io handles HTTPS termination automatically
 
 ## Important Constraints
@@ -156,9 +155,8 @@ SongGeneration-Studio-fly/     # This repository (deployment wrapper)
 └── .env                        # Environment variables (empty)
 
 /app (in container)             # Cloned at build time from upstream
-├── app.py                      # Gradio application entry point
-├── generation.py               # Song generation logic
-├── model_server.py             # LeVo model inference
+├── main.py                     # Application entry point (launched by Docker CMD)
+├── requirements.txt            # Python dependencies
 └── [other upstream files]
 ```
 
