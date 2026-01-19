@@ -19,14 +19,13 @@ RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git .
 
 # Install Python packages
 RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-RUN pip3 install --no-cache-dir gradio transformers accelerate
+
+# Install application dependencies from requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Pre-download models (optional but recommended to avoid timeout on first run)
 # RUN python3 -c "from transformers import AutoModel; AutoModel.from_pretrained('facebook/musicgen-small')"
 
-EXPOSE 7860
+EXPOSE 8000
 
-# Make start script executable if it exists
-RUN chmod +x start.sh || true
-
-CMD ["python3", "app.py", "--server-name", "0.0.0.0", "--server-port", "7860"]
+CMD ["python3", "main.py", "--host", "0.0.0.0", "--port", "8000"]

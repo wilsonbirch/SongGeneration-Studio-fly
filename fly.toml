@@ -1,15 +1,11 @@
 app = "songgen-studio"
-primary_region = "yyz"
+primary_region = "ord"
 
 [build]
   dockerfile = "Dockerfile"
 
-[env]
-  GRADIO_SERVER_NAME = "0.0.0.0"
-  GRADIO_SERVER_PORT = "7860"
-
 [http_service]
-  internal_port = 7860
+  internal_port = 8000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
@@ -17,7 +13,4 @@ primary_region = "yyz"
   processes = ["app"]
 
 [[vm]]
-  memory = '32gb'
-  cpu_kind = 'performance'
-  cpus = 8
-  gpu_kind = "a10"
+  size = "a10"
