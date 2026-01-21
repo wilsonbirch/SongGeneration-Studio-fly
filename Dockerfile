@@ -25,14 +25,15 @@ RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git /tmp/studio
 # Fix Python path in model_server.py (upstream bug - tools/gradio doesn't exist, should be patches/gradio)
 RUN sed -i 's|APP_DIR / "tools" / "gradio"|APP_DIR / "patches" / "gradio"|g' model_server.py
 
+# Copy missing separator.py from Tencent repo to patches/gradio (required by levo_inference_lowmem.py)
+RUN wget -O patches/gradio/separator.py \
+    https://raw.githubusercontent.com/tencent-ailab/SongGeneration/main/tools/gradio/separator.py
+
 # Install Python packages
 RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
 # Install application dependencies from requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Install audio-separator for vocal/instrumental separation
-RUN pip3 install --no-cache-dir audio-separator
 
 # Pre-download models (optional but recommended to avoid timeout on first run)
 # RUN python3 -c "from transformers import AutoModel; AutoModel.from_pretrained('facebook/musicgen-small')"
