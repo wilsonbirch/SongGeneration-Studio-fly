@@ -31,6 +31,9 @@ RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https:/
 # Install application dependencies from requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+# Install audio-separator for vocal/instrumental separation
+RUN pip3 install --no-cache-dir audio-separator
+
 # Pre-download models (optional but recommended to avoid timeout on first run)
 # RUN python3 -c "from transformers import AutoModel; AutoModel.from_pretrained('facebook/musicgen-small')"
 
