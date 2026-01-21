@@ -17,6 +17,9 @@ WORKDIR /app
 # Clone the repo
 RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git .
 
+# Fix Python path in model_server.py (upstream bug - tools/gradio doesn't exist, should be patches/gradio)
+RUN sed -i 's|APP_DIR / "tools" / "gradio"|APP_DIR / "patches" / "gradio"|g' model_server.py
+
 # Install Python packages
 RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 
