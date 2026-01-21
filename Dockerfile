@@ -22,6 +22,13 @@ RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git /tmp/studio
     cp -r /tmp/studio/* . && \
     rm -rf /tmp/studio
 
+# Install huggingface-hub to download third_party dependencies
+RUN pip3 install --no-cache-dir huggingface-hub
+
+# Download third_party directory from HuggingFace (contains demucs, Qwen2-7B, etc.)
+# This is required for separator.py and levo_inference
+RUN huggingface-cli download lglg666/SongGeneration-Runtime third_party --local-dir /app
+
 # Fix Python path in model_server.py (upstream bug - tools/gradio doesn't exist, should be patches/gradio)
 RUN sed -i 's|APP_DIR / "tools" / "gradio"|APP_DIR / "patches" / "gradio"|g' model_server.py
 
