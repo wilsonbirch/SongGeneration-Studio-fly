@@ -14,8 +14,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Clone the repo
-RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git .
+# Clone Tencent's base SongGeneration repo (contains codeclm and core models)
+RUN git clone https://github.com/tencent-ailab/SongGeneration.git .
+
+# Clone Studio wrapper to temporary location and overlay files
+RUN git clone https://github.com/BazedFrog/SongGeneration-Studio.git /tmp/studio && \
+    cp -r /tmp/studio/* . && \
+    rm -rf /tmp/studio
 
 # Fix Python path in model_server.py (upstream bug - tools/gradio doesn't exist, should be patches/gradio)
 RUN sed -i 's|APP_DIR / "tools" / "gradio"|APP_DIR / "patches" / "gradio"|g' model_server.py
