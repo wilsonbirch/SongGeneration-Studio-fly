@@ -14,3 +14,4 @@ primary_region = "ord"
 
 [[vm]]
   size = "a10"
+  memory = "64gb"
